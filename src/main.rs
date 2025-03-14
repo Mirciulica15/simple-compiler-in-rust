@@ -1,5 +1,6 @@
 use crate::file_reader::{read_file_and_compile, read_file_and_evaluate_expressions};
 use crate::file_writer::write_file;
+use std::{env, process};
 
 mod lexer;
 mod ast;
@@ -11,7 +12,17 @@ mod file_writer;
 fn main() {
     println!("Hello, Compiler!");
 
-    let result: Vec<i32> = match read_file_and_evaluate_expressions("test-file.mircea") {
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() != 3 {
+        eprintln!("Usage: <input_file> <output_file>");
+        process::exit(1);
+    }
+
+    let input_file = &args[1];
+    let output_file = &args[2];
+
+    let result: Vec<i32> = match read_file_and_evaluate_expressions(input_file) {
         Ok(r) => r,
         Err(e) => {
             eprintln!("Compilation error: {}", e);
@@ -21,7 +32,7 @@ fn main() {
 
     println!("Final result: {:#?}", &result);
 
-    let mut output_file = match write_file("output.mircea") {
+    let mut output_file = match write_file(output_file) {
         Ok(file) => file,
         Err(e) => {
             eprintln!("Error creating file: {}", e);
@@ -29,5 +40,5 @@ fn main() {
         }
     };
 
-    read_file_and_compile(&mut output_file, "test-file.mircea");
+    read_file_and_compile(&mut output_file, input_file);
 }
