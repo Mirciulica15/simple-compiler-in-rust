@@ -1,15 +1,20 @@
-use crate::ast::Expr;
-use crate::lexer::{tokenize, Token};
-use crate::parser::{evaluate_expression, parse_expression};
+use crate::file_reader::read_file;
 
 mod lexer;
 mod ast;
 mod parser;
+mod file_reader;
 
 fn main() {
     println!("Hello, Compiler!");
-    let tokenized: Vec<Token> = tokenize("5 - 2");
-    let expression: Expr = parse_expression(tokenized);
-    let expression_result: i32 = evaluate_expression(&expression);
-    println!("{:}", expression_result);
+
+    let result: Vec<i32> = match read_file("test-file.mircea") {
+        Ok(r) => r,
+        Err(e) => {
+            eprintln!("Compilation error: {}", e);
+            return;
+        }
+    };
+
+    println!("Final result: {:#?}", &result);
 }
