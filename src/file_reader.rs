@@ -39,7 +39,7 @@ mod tests {
     fn test_file_reader() {
         let test_cases = vec![
             ("non-existent-path.txt", Err(io::Error::new(io::ErrorKind::NotFound, "File not found"))),
-            ("test-file.mircea", Ok(vec![3, 1, 152])),
+            ("test-file.mircea", Ok(vec![3, 1, 152, 46, 7])),
         ];
 
         for (input, expected) in test_cases {
