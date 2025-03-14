@@ -6,7 +6,7 @@ pub fn parse_expression(tokens: Vec<Token>) -> Expr {
     let mut result = match iter.next() {
         Some(Token::NUMBER(value)) => {
             Expr::Number(*value)
-        },
+        }
         _ => {
             panic!("Expected a number");
         }
@@ -16,24 +16,50 @@ pub fn parse_expression(tokens: Vec<Token>) -> Expr {
         match token {
             Token::PLUS => {
                 if let Some(Token::NUMBER(value)) = iter.next() {
-                    result = Expr::Add(Box::new(result), Box::new(Expr::Number(*value)))
+                    let next = iter.next();
+                    if let Some(Token::MULTIPLY) = next {
+                        if let Some(Token::NUMBER(value2)) = iter.next() {
+                            result = Expr::Add(Box::new(result), Box::new(Expr::Multiply(
+                                Box::new(Expr::Number(*value)), Box::new(Expr::Number(*value2)))));
+                        }
+                    } else if let Some(Token::DIVIDE) = next {
+                        if let Some(Token::NUMBER(value2)) = iter.next() {
+                            result = Expr::Add(Box::new(result), Box::new(Expr::Divide(
+                                Box::new(Expr::Number(*value)), Box::new(Expr::Number(*value2)))));
+                        }
+                    } else {
+                        result = Expr::Add(Box::new(result), Box::new(Expr::Number(*value)));
+                    }
                 }
-            },
+            }
             Token::MINUS => {
                 if let Some(Token::NUMBER(value)) = iter.next() {
-                    result = Expr::Subtract(Box::new(result), Box::new(Expr::Number(*value)))
+                    let next = iter.next();
+                    if let Some(Token::MULTIPLY) = next {
+                        if let Some(Token::NUMBER(value2)) = iter.next() {
+                            result = Expr::Subtract(Box::new(result), Box::new(Expr::Multiply(
+                                Box::new(Expr::Number(*value)), Box::new(Expr::Number(*value2)))));
+                        }
+                    } else if let Some(Token::DIVIDE) = next {
+                        if let Some(Token::NUMBER(value2)) = iter.next() {
+                            result = Expr::Subtract(Box::new(result), Box::new(Expr::Divide(
+                                Box::new(Expr::Number(*value)), Box::new(Expr::Number(*value2)))));
+                        }
+                    } else {
+                        result = Expr::Subtract(Box::new(result), Box::new(Expr::Number(*value)));
+                    }
                 }
-            },
+            }
             Token::MULTIPLY => {
                 if let Some(Token::NUMBER(value)) = iter.next() {
-                    result = Expr::Multiply(Box::new(result), Box::new(Expr::Number(*value)))
+                    result = Expr::Multiply(Box::new(result), Box::new(Expr::Number(*value)));
                 }
-            },
+            }
             Token::DIVIDE => {
                 if let Some(Token::NUMBER(value)) = iter.next() {
-                    result = Expr::Divide(Box::new(result), Box::new(Expr::Number(*value)))
+                    result = Expr::Divide(Box::new(result), Box::new(Expr::Number(*value)));
                 }
-            },
+            }
             _ => panic!("Unexpected token")
         }
     }
@@ -46,16 +72,16 @@ pub fn evaluate_expression(expr: &Expr) -> i32 {
         Expr::Number(n) => *n,
         Expr::Add(box1, box2) => {
             evaluate_expression(box1) + evaluate_expression(box2)
-        },
+        }
         Expr::Subtract(box1, box2) => {
             evaluate_expression(box1) - evaluate_expression(box2)
-        },
+        }
         Expr::Multiply(box1, box2) => {
             evaluate_expression(box1) * evaluate_expression(box2)
-        },
+        }
         Expr::Divide(box1, box2) => {
             evaluate_expression(box1) / evaluate_expression(box2)
-        },
+        }
     }
 }
 
