@@ -1,8 +1,5 @@
-use crate::compiler::compile_expression;
-use crate::file_reader::read_file;
+use crate::file_reader::{read_file_and_compile, read_file_and_evaluate_expressions};
 use crate::file_writer::write_file;
-use crate::lexer::tokenize;
-use crate::parser::parse_expression;
 
 mod lexer;
 mod ast;
@@ -14,7 +11,7 @@ mod file_writer;
 fn main() {
     println!("Hello, Compiler!");
 
-    let result: Vec<i32> = match read_file("test-file.mircea") {
+    let result: Vec<i32> = match read_file_and_evaluate_expressions("test-file.mircea") {
         Ok(r) => r,
         Err(e) => {
             eprintln!("Compilation error: {}", e);
@@ -24,9 +21,6 @@ fn main() {
 
     println!("Final result: {:#?}", &result);
 
-    let tokenized = tokenize("1 + 2");
-    let expression = parse_expression(tokenized);
-
     let mut output_file = match write_file("output.mircea") {
         Ok(file) => file,
         Err(e) => {
@@ -35,5 +29,5 @@ fn main() {
         }
     };
 
-    compile_expression(&mut output_file, expression);
+    read_file_and_compile(&mut output_file, "test-file.mircea");
 }

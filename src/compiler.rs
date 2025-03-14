@@ -2,10 +2,10 @@ use crate::ast::Expr;
 use std::fs::File;
 use std::io::Write;
 
-pub fn compile_expression(file: &mut File, expr: Expr) {
+pub fn compile_expression(output_file: &mut File, expr: Expr) {
     match expr {
         Expr::Number(value) => {
-            match writeln!(file, "{}", &format!("PUSH {}", value)) {
+            match writeln!(output_file, "{}", &format!("PUSH {}", value)) {
                 Ok(_) => {}
                 Err(e) => {
                     eprintln!("Error writing to file: {}", e);
@@ -14,9 +14,9 @@ pub fn compile_expression(file: &mut File, expr: Expr) {
             };
         }
         Expr::Add(box1, box2) => {
-            compile_expression(file, *box1);
-            compile_expression(file, *box2);
-            match writeln!(file, "ADD") {
+            compile_expression(output_file, *box1);
+            compile_expression(output_file, *box2);
+            match writeln!(output_file, "ADD") {
                 Ok(_) => {}
                 Err(e) => {
                     eprintln!("Error writing to file: {}", e);
@@ -25,9 +25,9 @@ pub fn compile_expression(file: &mut File, expr: Expr) {
             };
         }
         Expr::Subtract(box1, box2) => {
-            compile_expression(file, *box1);
-            compile_expression(file, *box2);
-            match writeln!(file, "SUB") {
+            compile_expression(output_file, *box1);
+            compile_expression(output_file, *box2);
+            match writeln!(output_file, "SUB") {
                 Ok(_) => {}
                 Err(e) => {
                     eprintln!("Error writing to file: {}", e);
@@ -36,9 +36,9 @@ pub fn compile_expression(file: &mut File, expr: Expr) {
             };
         }
         Expr::Multiply(box1, box2) => {
-            compile_expression(file, *box1);
-            compile_expression(file, *box2);
-            match writeln!(file, "MUL") {
+            compile_expression(output_file, *box1);
+            compile_expression(output_file, *box2);
+            match writeln!(output_file, "MUL") {
                 Ok(_) => {}
                 Err(e) => {
                     eprintln!("Error writing to file: {}", e);
@@ -47,9 +47,9 @@ pub fn compile_expression(file: &mut File, expr: Expr) {
             };
         }
         Expr::Divide(box1, box2) => {
-            compile_expression(file, *box1);
-            compile_expression(file, *box2);
-            match writeln!(file, "DIV") {
+            compile_expression(output_file, *box1);
+            compile_expression(output_file, *box2);
+            match writeln!(output_file, "DIV") {
                 Ok(_) => {}
                 Err(e) => {
                     eprintln!("Error writing to file: {}", e);
